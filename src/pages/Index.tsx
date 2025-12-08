@@ -5,10 +5,12 @@ import { Card } from "@/components/ui/card";
 import { ClientForm } from "@/components/ClientForm";
 import { BankForm } from "@/components/BankForm";
 import { ChargesForm } from "@/components/ChargesForm";
+import { ScreenshotUpload } from "@/components/ScreenshotUpload";
 import { PetitionPreview } from "@/components/PetitionPreview";
 import { PetitionData, ClientData, BankData, ChargeItem, BANKS } from "@/types/petition";
 import { getCurrentDateFormatted } from "@/utils/formatters";
-import { FileText, Download, Eye, User, Building2, Receipt, Scale } from "lucide-react";
+import { exportToWord } from "@/utils/exportWord";
+import { FileText, Download, Eye, User, Building2, Receipt, Scale, FileDown } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const initialClientData: ClientData = {
@@ -38,6 +40,7 @@ const Index = () => {
   const [charges, setCharges] = useState<ChargeItem[]>([]);
   const [moralDamage, setMoralDamage] = useState(20000);
   const [wastedTimeDamage, setWastedTimeDamage] = useState(2000);
+  const [chargeScreenshots, setChargeScreenshots] = useState<string[]>([]);
 
   const petitionData: PetitionData = {
     client: clientData,
@@ -48,6 +51,7 @@ const Index = () => {
     moralDamage,
     wastedTimeDamage,
     dateOfPetition: getCurrentDateFormatted(),
+    chargeScreenshots,
   };
 
   const handleExportPDF = async () => {
@@ -88,6 +92,23 @@ const Index = () => {
     }
   };
 
+  const handleExportWord = async () => {
+    try {
+      await exportToWord(petitionData);
+      toast({
+        title: "Word Gerado!",
+        description: "O arquivo .docx foi baixado com sucesso.",
+      });
+    } catch (error) {
+      console.error("Error generating Word:", error);
+      toast({
+        title: "Erro ao gerar Word",
+        description: "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const tabs = [
     { id: "client", label: "Autor", icon: User },
     { id: "bank", label: "Requerido", icon: Building2 },
@@ -110,18 +131,22 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 onClick={() => setShowPreview(!showPreview)}
                 className="hidden md:flex"
               >
                 <Eye className="w-4 h-4 mr-2" />
-                {showPreview ? "Ocultar Preview" : "Visualizar"}
+                {showPreview ? "Ocultar" : "Preview"}
+              </Button>
+              <Button variant="outline" onClick={handleExportWord}>
+                <FileDown className="w-4 h-4 mr-2" />
+                Word
               </Button>
               <Button variant="gold" onClick={handleExportPDF}>
                 <Download className="w-4 h-4 mr-2" />
-                Exportar PDF
+                PDF
               </Button>
             </div>
           </div>
@@ -153,18 +178,27 @@ const Index = () => {
                 </TabsContent>
 
                 <TabsContent value="charges">
-                  <ChargesForm
-                    petitionType={petitionType}
-                    chargeDescription={chargeDescription}
-                    charges={charges}
-                    moralDamage={moralDamage}
-                    wastedTimeDamage={wastedTimeDamage}
-                    onPetitionTypeChange={setPetitionType}
-                    onChargeDescriptionChange={setChargeDescription}
-                    onChargesChange={setCharges}
-                    onMoralDamageChange={setMoralDamage}
-                    onWastedTimeDamageChange={setWastedTimeDamage}
-                  />
+                  <div className="space-y-6">
+                    <ChargesForm
+                      petitionType={petitionType}
+                      chargeDescription={chargeDescription}
+                      charges={charges}
+                      moralDamage={moralDamage}
+                      wastedTimeDamage={wastedTimeDamage}
+                      onPetitionTypeChange={setPetitionType}
+                      onChargeDescriptionChange={setChargeDescription}
+                      onChargesChange={setCharges}
+                      onMoralDamageChange={setMoralDamage}
+                      onWastedTimeDamageChange={setWastedTimeDamage}
+                    />
+                    
+                    <div className="section-divider" />
+                    
+                    <ScreenshotUpload
+                      screenshots={chargeScreenshots}
+                      onScreenshotsChange={setChargeScreenshots}
+                    />
+                  </div>
                 </TabsContent>
               </Tabs>
 
