@@ -28,6 +28,19 @@ export interface ChargeItem {
   date: string;
   description: string;
   value: number;
+  screenshot?: string; // Base64 image data
+}
+
+export interface OfficeData {
+  name: string;
+  address: string;
+  cep: string;
+  city: string;
+  state: string;
+  phone: string;
+  email: string;
+  website: string;
+  logoUrl?: string;
 }
 
 export interface PetitionData {
@@ -39,7 +52,19 @@ export interface PetitionData {
   moralDamage: number;
   wastedTimeDamage: number;
   dateOfPetition: string;
+  chargeScreenshots: string[]; // Array of base64 images
 }
+
+export const DEFAULT_OFFICE: OfficeData = {
+  name: 'SENA ADVOCACIA',
+  address: 'Avenida Fernando Pessoa, 1179, Japiim II',
+  cep: '69.076-790',
+  city: 'Manaus',
+  state: 'AM',
+  phone: '(92) 99999-9999',
+  email: 'contato@senaadvocacia.com.br',
+  website: 'www.senaadvocacia.com.br',
+};
 
 export type PetitionType = 
   | 'TARIFAS_INDEVIDAS' 

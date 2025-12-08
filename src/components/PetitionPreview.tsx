@@ -1,4 +1,4 @@
-import { PetitionData, PETITION_TYPE_LABELS } from "@/types/petition";
+import { PetitionData, PETITION_TYPE_LABELS, DEFAULT_OFFICE } from "@/types/petition";
 import { formatCurrency, formatCurrencyExtended, formatDate, formatDateShort } from "@/utils/formatters";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -7,8 +7,9 @@ interface PetitionPreviewProps {
 }
 
 export function PetitionPreview({ data }: PetitionPreviewProps) {
-  const { client, bank, charges, moralDamage, wastedTimeDamage, chargeDescription, petitionType } = data;
-  
+  const { client, bank, charges, moralDamage, wastedTimeDamage, chargeDescription, petitionType, chargeScreenshots } = data;
+  const office = DEFAULT_OFFICE;
+
   const totalCharges = charges.reduce((sum, c) => sum + c.value, 0);
   const materialDamage = totalCharges * 2;
   const totalIndenization = moralDamage + wastedTimeDamage;
@@ -19,7 +20,20 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
   return (
     <ScrollArea className="h-[calc(100vh-12rem)] w-full">
       <div className="legal-document bg-white p-8 max-w-[21cm] mx-auto shadow-lg" id="petition-content">
-        {/* Header */}
+        {/* Header with Office Identity */}
+        <div className="border-b-4 border-navy pb-4 mb-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-navy tracking-wide">{office.name}</h1>
+            <p className="text-sm text-gray-600 mt-1">
+              {office.address} - CEP: {office.cep}
+            </p>
+            <p className="text-sm text-gray-600">
+              {office.city}/{office.state} | {office.phone} | {office.email}
+            </p>
+          </div>
+        </div>
+
+        {/* Ao Juízo */}
         <div className="text-center mb-8">
           <p className="font-bold">
             AO JUÍZO DE DIREITO DA __ VARA DO JUIZADO ESPECIAL CÍVEL DA COMARCA DE {client.city?.toUpperCase() || 'MANAUS'}/{client.state || 'AM'}
@@ -29,7 +43,7 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
         {/* Qualificação do Autor */}
         <div className="text-justify mb-6 leading-relaxed">
           <p>
-            <strong>{client.name || 'FULANO DE TAL'}</strong>, {client.nationality || 'brasileiro'}, {client.civilStatus || 'estado civil'}, {client.profession || 'profissão'}, CPF Nº. {client.cpf || '000.000.000-00'}, RG Nº. {client.rg || '00000000'} - {client.rgIssuer || 'SSP/AM'}, residente e domiciliado no {client.street || '...'}, nº {client.number || '...'}, Bairro: {client.neighborhood || '...'}, CEP: {client.cep || '...'}, {client.city || 'Manaus'} – {client.state || 'Amazonas'}, por intermédio de seu advogado, legalmente constituído, com escritório profissional na Avenida Fernando Pessoa, 1179, Japiim II - CEP 69.076-790, Manaus – Amazonas, onde recebe intimações e notificações, com base nos artigos 319 e seguintes do Código de Processo Civil, bem como no art. 5º, V, CRFB/88 e demais dispositivos legais previstos no Código de Defesa do Consumidor e na Autorregulação Bancária propor:
+            <strong>{client.name || 'FULANO DE TAL'}</strong>, {client.nationality || 'brasileiro'}, {client.civilStatus || 'estado civil'}, {client.profession || 'profissão'}, CPF Nº. {client.cpf || '000.000.000-00'}, RG Nº. {client.rg || '00000000'} - {client.rgIssuer || 'SSP/AM'}, residente e domiciliado no {client.street || '...'}, nº {client.number || '...'}, Bairro: {client.neighborhood || '...'}, CEP: {client.cep || '...'}, {client.city || 'Manaus'} – {client.state || 'Amazonas'}, por intermédio de seu advogado, legalmente constituído, com escritório profissional na {office.address} - CEP {office.cep}, {office.city} – {office.state}, onde recebe intimações e notificações, com base nos artigos 319 e seguintes do Código de Processo Civil, bem como no art. 5º, V, CRFB/88 e demais dispositivos legais previstos no Código de Defesa do Consumidor e na Autorregulação Bancária propor:
           </p>
         </div>
 
@@ -102,6 +116,21 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
             Não restando alternativa a parte Autora, senão socorrer-se do Poder Judiciário para ver declarada a inexistência da relação jurídica que fundamentaria tais cobranças, bem como para restituir os valores pagos indevidamente e reparar os danos morais suportados diante da conduta abusiva da instituição financeira.
           </p>
         </div>
+
+        {/* Screenshots dos Descontos */}
+        {chargeScreenshots && chargeScreenshots.length > 0 && (
+          <div className="my-6">
+            <h3 className="font-bold mb-3">Prints dos Extratos:</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {chargeScreenshots.map((screenshot, index) => (
+                <div key={index} className="border border-gray-300 rounded p-2">
+                  <img src={screenshot} alt={`Print ${index + 1}`} className="w-full h-auto" />
+                  <p className="text-center text-xs text-gray-500 mt-1">Print {index + 1}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* III - DO DIREITO */}
         <div className="mb-6">
@@ -242,6 +271,12 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
               OAB-RR 806-A
             </p>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 pt-4 border-t-4 border-navy text-center text-sm text-gray-600">
+          <p className="font-semibold text-navy">{office.name}</p>
+          <p>{office.website}</p>
         </div>
       </div>
     </ScrollArea>
