@@ -6,43 +6,42 @@
 
 @layer base {
   :root {
-    /* Legal/Corporate Theme - Navy & Gold */
-    --background: 210 25% 97%;
-    --foreground: 220 30% 15%;
+    /* Ajuri Comp Theme - Green/Nature */
+    --background: 120 15% 97%;
+    --foreground: 150 40% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 15%;
+    --card-foreground: 150 40% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 15%;
+    --popover-foreground: 150 40% 12%;
 
-    --primary: 220 60% 25%;
-    --primary-foreground: 45 100% 95%;
+    --primary: 140 60% 28%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 92%;
-    --secondary-foreground: 220 30% 20%;
+    --secondary: 120 15% 92%;
+    --secondary-foreground: 150 40% 18%;
 
-    --muted: 210 15% 90%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 120 10% 90%;
+    --muted-foreground: 150 10% 40%;
 
-    --accent: 40 85% 55%;
-    --accent-foreground: 220 60% 15%;
+    --accent: 100 70% 45%;
+    --accent-foreground: 150 60% 12%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 85%;
-    --input: 220 20% 88%;
-    --ring: 220 60% 35%;
+    --border: 140 15% 82%;
+    --input: 140 15% 88%;
+    --ring: 140 50% 35%;
 
     --radius: 0.5rem;
 
     /* Custom colors */
-    --gold: 40 85% 55%;
-    --gold-light: 45 80% 70%;
-    --navy: 220 60% 25%;
-    --navy-light: 220 50% 35%;
-    --navy-dark: 220 70% 15%;
+    --green: 140 60% 28%;
+    --green-light: 100 70% 45%;
+    --green-dark: 150 65% 18%;
+    --green-accent: 85 70% 50%;
     
     /* Typography */
     --font-heading: 'Crimson Text', Georgia, serif;
@@ -64,42 +63,42 @@
   }
 
   .dark {
-    --background: 220 30% 8%;
-    --foreground: 210 20% 95%;
+    --background: 150 25% 8%;
+    --foreground: 120 15% 95%;
 
-    --card: 220 30% 12%;
-    --card-foreground: 210 20% 95%;
+    --card: 150 25% 12%;
+    --card-foreground: 120 15% 95%;
 
-    --popover: 220 30% 12%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 150 25% 12%;
+    --popover-foreground: 120 15% 95%;
 
-    --primary: 40 85% 55%;
-    --primary-foreground: 220 60% 10%;
+    --primary: 100 70% 45%;
+    --primary-foreground: 150 60% 8%;
 
-    --secondary: 220 25% 18%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 150 20% 18%;
+    --secondary-foreground: 120 15% 90%;
 
-    --muted: 220 25% 15%;
-    --muted-foreground: 210 15% 60%;
+    --muted: 150 20% 15%;
+    --muted-foreground: 120 10% 60%;
 
-    --accent: 40 75% 50%;
-    --accent-foreground: 220 60% 10%;
+    --accent: 85 70% 50%;
+    --accent-foreground: 150 60% 8%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 25% 20%;
-    --input: 220 25% 20%;
-    --ring: 40 75% 50%;
+    --border: 150 20% 20%;
+    --input: 150 20% 20%;
+    --ring: 100 70% 45%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 150 25% 10%;
+    --sidebar-foreground: 120 15% 95%;
+    --sidebar-primary: 140 60% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 150 20% 16%;
+    --sidebar-accent-foreground: 120 15% 95%;
+    --sidebar-border: 150 20% 16%;
+    --sidebar-ring: 100 70% 45%;
   }
 }
 
@@ -130,8 +129,8 @@
     line-height: 1.5;
   }
 
-  .gold-accent {
-    color: hsl(var(--gold));
+  .green-accent {
+    color: hsl(var(--green-light));
   }
 
   .card-elevated {
@@ -156,14 +155,14 @@
     box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
   }
 
-  .btn-gold {
-    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
-    @apply text-navy-dark font-semibold;
-    box-shadow: 0 4px 15px hsl(var(--gold) / 0.4);
+  .btn-green {
+    background: linear-gradient(135deg, hsl(var(--green)), hsl(var(--green-light)));
+    @apply text-primary-foreground font-semibold;
+    box-shadow: 0 4px 15px hsl(var(--green) / 0.4);
   }
 
-  .btn-gold:hover {
-    box-shadow: 0 6px 20px hsl(var(--gold) / 0.5);
+  .btn-green:hover {
+    box-shadow: 0 6px 20px hsl(var(--green) / 0.5);
     transform: translateY(-1px);
   }
 
