@@ -1,6 +1,8 @@
 import { PetitionData, PETITION_TYPE_LABELS, DEFAULT_OFFICE } from "@/types/petition";
 import { formatCurrency, formatCurrencyExtended, formatDate, formatDateShort } from "@/utils/formatters";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import headerImage from "@/assets/header-sena.png";
+import footerImage from "@/assets/footer-sena.png";
 
 interface PetitionPreviewProps {
   data: PetitionData;
@@ -20,28 +22,25 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
   return (
     <ScrollArea className="h-[calc(100vh-12rem)] w-full">
       <div className="legal-document bg-white p-8 max-w-[21cm] mx-auto shadow-lg" id="petition-content">
-        {/* Header with Office Identity */}
-        <div className="border-b-4 border-navy pb-4 mb-6">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-navy tracking-wide">{office.name}</h1>
-            <p className="text-sm text-gray-600 mt-1">
-              {office.address} - CEP: {office.cep}
-            </p>
-            <p className="text-sm text-gray-600">
-              {office.city}/{office.state} | {office.phone} | {office.email}
-            </p>
-          </div>
+        {/* Header with Office Identity - Image */}
+        <div className="mb-4">
+          <img 
+            src={headerImage} 
+            alt="Sena Advocacia Header" 
+            className="w-full h-auto"
+            style={{ maxHeight: '80px', objectFit: 'contain', objectPosition: 'right' }}
+          />
         </div>
 
         {/* Ao Juízo */}
         <div className="text-center mb-8">
-          <p className="font-bold">
+          <p className="font-bold text-sm" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>
             AO JUÍZO DE DIREITO DA __ VARA DO JUIZADO ESPECIAL CÍVEL DA COMARCA DE {client.city?.toUpperCase() || 'MANAUS'}/{client.state || 'AM'}
           </p>
         </div>
 
         {/* Qualificação do Autor */}
-        <div className="text-justify mb-6 leading-relaxed">
+        <div className="text-justify mb-6 leading-relaxed" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
           <p>
             <strong>{client.name || 'FULANO DE TAL'}</strong>, {client.nationality || 'brasileiro'}, {client.civilStatus || 'estado civil'}, {client.profession || 'profissão'}, CPF Nº. {client.cpf || '000.000.000-00'}, RG Nº. {client.rg || '00000000'} - {client.rgIssuer || 'SSP/AM'}, residente e domiciliado no {client.street || '...'}, nº {client.number || '...'}, Bairro: {client.neighborhood || '...'}, CEP: {client.cep || '...'}, {client.city || 'Manaus'} – {client.state || 'Amazonas'}, por intermédio de seu advogado, legalmente constituído, com escritório profissional na {office.address} - CEP {office.cep}, {office.city} – {office.state}, onde recebe intimações e notificações, com base nos artigos 319 e seguintes do Código de Processo Civil, bem como no art. 5º, V, CRFB/88 e demais dispositivos legais previstos no Código de Defesa do Consumidor e na Autorregulação Bancária propor:
           </p>
@@ -49,13 +48,13 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
 
         {/* Título da Ação */}
         <div className="text-center my-8">
-          <h1 className="text-lg font-bold uppercase">
+          <h1 className="text-base font-bold uppercase" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>
             AÇÃO DE RESPONSABILIDADE CIVIL C/C INDENIZAÇÃO POR DANOS MATERIAIS E MORAIS POR COBRANÇA INDEVIDA
           </h1>
         </div>
 
         {/* Qualificação do Réu */}
-        <div className="text-justify mb-8 leading-relaxed">
+        <div className="text-justify mb-8 leading-relaxed" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
           <p>
             em face de <strong>{bank.name || 'BANCO EXEMPLO S/A'}</strong>, pessoa jurídica de direito privado, com registro no CNPJ sob o nº {bank.cnpj || '00.000.000/0001-00'}, com sede na cidade de {bank.city || 'Cidade'}/{bank.state || 'UF'}, {bank.address || 'Endereço'}, CEP: {bank.cep || '00.000-000'}, pelas razões de fato e de direito que passa a expor:
           </p>
@@ -63,8 +62,8 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
 
         {/* I - DOS FATOS */}
         <div className="mb-6">
-          <h2 className="font-bold text-center mb-4">I - DOS FATOS</h2>
-          <div className="text-justify leading-relaxed space-y-4">
+          <h2 className="font-bold text-center mb-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>I - DOS FATOS</h2>
+          <div className="text-justify leading-relaxed space-y-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               A parte Autora mantém vínculo contratual com a instituição financeira conforme comprovado (anexo 6), todavia, ao proceder à conferência de seus extratos, passou a constatar lançamentos mensais indevidos sob a rubrica "{chargeLabel}", sem que houvesse qualquer solicitação, anuência ou assinatura de contrato específico que legitimasse tais cobranças. Evidencia-se, assim, a ocorrência de descontos unilaterais e abusivos, perpetrados em flagrante desrespeito aos princípios da lealdade contratual, da informação e da confiança, que regem as relações de consumo.
             </p>
@@ -80,7 +79,7 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
         {/* Tabela de Cobranças */}
         {charges.length > 0 && (
           <div className="my-6">
-            <table className="w-full border-collapse border border-gray-400 text-sm">
+            <table className="w-full border-collapse border border-gray-400 text-sm" style={{ fontFamily: 'Arial, sans-serif', fontSize: '11pt' }}>
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-400 p-2 text-left">Data</th>
@@ -105,7 +104,7 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
           </div>
         )}
 
-        <div className="text-justify leading-relaxed space-y-4 mb-6">
+        <div className="text-justify leading-relaxed space-y-4 mb-6" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
           <p>
             Neste sentido, os valores cobrados INDEVIDAMENTE a título de "{chargeLabel}" soma a quantia de {formatCurrencyExtended(totalCharges)}, com repetição do indébito (2x {formatCurrency(totalCharges)}), totaliza o valor de {formatCurrencyExtended(materialDamage)}, em virtude da devolução EM DOBRO.
           </p>
@@ -120,7 +119,7 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
         {/* Screenshots dos Descontos */}
         {chargeScreenshots && chargeScreenshots.length > 0 && (
           <div className="my-6">
-            <h3 className="font-bold mb-3">Prints dos Extratos:</h3>
+            <h3 className="font-bold mb-3" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>Prints dos Extratos:</h3>
             <div className="grid grid-cols-2 gap-4">
               {chargeScreenshots.map((screenshot, index) => (
                 <div key={index} className="border border-gray-300 rounded p-2">
@@ -134,10 +133,10 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
 
         {/* III - DO DIREITO */}
         <div className="mb-6">
-          <h2 className="font-bold text-center mb-4">III - DO DIREITO</h2>
+          <h2 className="font-bold text-center mb-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>III - DO DIREITO</h2>
           
-          <h3 className="font-bold mb-3">III.I – DA APLICABILIDADE DO CÓDIGO DE DEFESA DO CONSUMIDOR E RELAÇÃO DE CONSUMO</h3>
-          <div className="text-justify leading-relaxed space-y-4 mb-6">
+          <h3 className="font-bold mb-3" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>III.I – DA APLICABILIDADE DO CÓDIGO DE DEFESA DO CONSUMIDOR E RELAÇÃO DE CONSUMO</h3>
+          <div className="text-justify leading-relaxed space-y-4 mb-6" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               A presente demanda versa sobre relação de consumo, plenamente caracterizada pela existência de vínculo jurídico entre a instituição financeira, fornecedora de serviços bancários, e a parte autora, destinatária final desses serviços, nos termos dos artigos 2º e 3º do Código de Defesa do Consumidor (Lei nº 8.078/90).
             </p>
@@ -149,8 +148,8 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
             </p>
           </div>
 
-          <h3 className="font-bold mb-3">III.II – DA COBRANÇA INDEVIDA E DA REPETIÇÃO DO INDÉBITO</h3>
-          <div className="text-justify leading-relaxed space-y-4 mb-6">
+          <h3 className="font-bold mb-3" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>III.II – DA COBRANÇA INDEVIDA E DA REPETIÇÃO DO INDÉBITO</h3>
+          <div className="text-justify leading-relaxed space-y-4 mb-6" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               A conduta da instituição financeira ré, ao realizar cobranças mensais por serviços não contratados, caracteriza típica prática abusiva, expressamente vedada pelo Código de Defesa do Consumidor.
             </p>
@@ -159,15 +158,15 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
             </p>
           </div>
 
-          <h3 className="font-bold mb-3">III.III – DA RESPONSABILIDADE OBJETIVA DA INSTITUIÇÃO FINANCEIRA</h3>
-          <div className="text-justify leading-relaxed space-y-4 mb-6">
+          <h3 className="font-bold mb-3" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>III.III – DA RESPONSABILIDADE OBJETIVA DA INSTITUIÇÃO FINANCEIRA</h3>
+          <div className="text-justify leading-relaxed space-y-4 mb-6" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               A responsabilidade civil do Banco é objetiva, nos termos do art. 14 do CDC, bastando a comprovação da conduta lesiva, do dano e do nexo causal.
             </p>
           </div>
 
-          <h3 className="font-bold mb-3">III.IV – DA INVERSÃO DO ÔNUS DA PROVA</h3>
-          <div className="text-justify leading-relaxed space-y-4 mb-6">
+          <h3 className="font-bold mb-3" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>III.IV – DA INVERSÃO DO ÔNUS DA PROVA</h3>
+          <div className="text-justify leading-relaxed space-y-4 mb-6" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               Nos termos do art. 6º, inciso VIII, do CDC, é cabível a inversão do ônus da prova em favor do consumidor, diante da sua hipossuficiência técnica e da verossimilhança das alegações.
             </p>
@@ -176,8 +175,8 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
 
         {/* V - DOS DANOS MATERIAIS */}
         <div className="mb-6">
-          <h2 className="font-bold text-center mb-4">V - DOS DANOS MATERIAIS – REPETIÇÃO DO INDÉBITO</h2>
-          <div className="text-justify leading-relaxed space-y-4">
+          <h2 className="font-bold text-center mb-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>V - DOS DANOS MATERIAIS – REPETIÇÃO DO INDÉBITO</h2>
+          <div className="text-justify leading-relaxed space-y-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               Conforme amplamente demonstrado nos tópicos anteriores, a parte autora foi vítima de cobranças indevidas e reiteradas de um serviço não contratado.
             </p>
@@ -192,8 +191,8 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
 
         {/* VI - DOS DANOS MORAIS */}
         <div className="mb-6">
-          <h2 className="font-bold text-center mb-4">VI - DOS DANOS MORAIS</h2>
-          <div className="text-justify leading-relaxed space-y-4">
+          <h2 className="font-bold text-center mb-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>VI - DOS DANOS MORAIS</h2>
+          <div className="text-justify leading-relaxed space-y-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p>
               A conduta da instituição ré ultrapassa os limites do mero aborrecimento ou dissabor cotidiano. A cobrança indevida de valores da conta bancária da autora, de forma reiterada e sem qualquer respaldo contratual, caracteriza evidente violação à dignidade do consumidor.
             </p>
@@ -209,8 +208,8 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
         {/* VI.I - DO TEMPO DESPERDIÇADO */}
         {wastedTimeDamage > 0 && (
           <div className="mb-6">
-            <h2 className="font-bold text-center mb-4">VI.I – DO TEMPO DESPERDIÇADO</h2>
-            <div className="text-justify leading-relaxed space-y-4">
+            <h2 className="font-bold text-center mb-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>VI.I – DO TEMPO DESPERDIÇADO</h2>
+            <div className="text-justify leading-relaxed space-y-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
               <p>
                 Além dos prejuízos materiais e morais já demonstrados, cumpre destacar a incidência da Teoria do Desvio Produtivo do Consumidor.
               </p>
@@ -223,8 +222,8 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
 
         {/* VII - DOS PEDIDOS */}
         <div className="mb-6">
-          <h2 className="font-bold text-center mb-4">VII - DOS PEDIDOS</h2>
-          <div className="text-justify leading-relaxed">
+          <h2 className="font-bold text-center mb-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>VII - DOS PEDIDOS</h2>
+          <div className="text-justify leading-relaxed" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
             <p className="mb-4">Ante o exposto, requer:</p>
             <ol className="list-decimal pl-6 space-y-3">
               <li>A concessão do benefício da justiça gratuita, nos termos do art. 98 do CPC;</li>
@@ -249,19 +248,19 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
         </div>
 
         {/* Valor da Causa */}
-        <div className="text-justify my-8">
+        <div className="text-justify my-8" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt', lineHeight: '1.5' }}>
           <p>
             Dá-se à causa, o valor de {formatCurrencyExtended(totalValue)}.
           </p>
         </div>
 
         {/* Encerramento */}
-        <div className="text-justify mb-8">
+        <div className="text-justify mb-8" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>
           <p>Nestes termos, pede deferimento.</p>
         </div>
 
         {/* Data e Assinatura */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-12" style={{ fontFamily: 'Arial, sans-serif', fontSize: '12pt' }}>
           <p>{client.city || 'Manaus'} / {client.state || 'AM'}, {formatDate(data.dateOfPetition)}</p>
           <div className="mt-12">
             <p className="border-t border-black inline-block pt-2 px-16">
@@ -273,10 +272,14 @@ export function PetitionPreview({ data }: PetitionPreviewProps) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-12 pt-4 border-t-4 border-navy text-center text-sm text-gray-600">
-          <p className="font-semibold text-navy">{office.name}</p>
-          <p>{office.website}</p>
+        {/* Footer with Office Identity - Image */}
+        <div className="mt-12">
+          <img 
+            src={footerImage} 
+            alt="Sena Advocacia Footer" 
+            className="w-full h-auto"
+            style={{ maxHeight: '60px', objectFit: 'contain' }}
+          />
         </div>
       </div>
     </ScrollArea>

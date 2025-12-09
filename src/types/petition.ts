@@ -41,6 +41,8 @@ export interface OfficeData {
   email: string;
   website: string;
   logoUrl?: string;
+  oabNumbers?: string;
+  secondaryAddress?: string;
 }
 
 export interface PetitionData {
@@ -57,16 +59,18 @@ export interface PetitionData {
 
 export const DEFAULT_OFFICE: OfficeData = {
   name: 'SENA ADVOCACIA',
-  address: 'Avenida Fernando Pessoa, 1179, Japiim II',
-  cep: '69.076-790',
+  address: 'Av. Fernando Pessoa Nº 1179, Japiim II',
+  cep: '69076-100',
   city: 'Manaus',
-  state: 'AM',
-  phone: '(92) 99999-9999',
-  email: 'contato@senaadvocacia.com.br',
-  website: 'www.senaadvocacia.com.br',
+  state: 'Amazonas',
+  phone: 'OAB/AM 15.128 | OAB/CE 53112-A | OAB/RR 806-A',
+  email: 'adv.danielsena@gmail.com',
+  website: '@danielsena.adv',
+  oabNumbers: 'OAB/AM 15.128 | OAB/CE 53112-A | OAB/RR 806-A',
+  secondaryAddress: 'Rua João Diniz Nº 116 B, Centro - Manaquiri - Amazonas | CEP 69435-000',
 };
 
-export type PetitionType = 
+export type PetitionType =
   | 'TARIFAS_INDEVIDAS' 
   | 'SEGURO_NAO_CONTRATADO' 
   | 'RMC_RCC' 
