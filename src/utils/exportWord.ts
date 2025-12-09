@@ -12,8 +12,6 @@ import {
   Footer,
   ImageRun,
   PageNumber,
-  NumberFormat,
-  HeadingLevel,
 } from "docx";
 import { saveAs } from "file-saver";
 import { Packer } from "docx";
@@ -23,27 +21,27 @@ import { formatCurrency, formatCurrencyExtended, formatDateShort, formatDate } f
 const FONT_FAMILY = "Arial";
 const FONT_SIZE_NORMAL = 24; // 12pt in half-points
 const FONT_SIZE_SMALL = 20; // 10pt
-const FONT_SIZE_HEADER = 20; // 10pt
+const FONT_SIZE_HEADER = 18; // 9pt
 
-function createTextRun(text: string, options?: { bold?: boolean; size?: number; italics?: boolean }) {
+function createTextRun(text: string, options?: { bold?: boolean; size?: number; italics?: boolean; color?: string }) {
   return new TextRun({
     text,
     font: FONT_FAMILY,
     size: options?.size || FONT_SIZE_NORMAL,
     bold: options?.bold,
     italics: options?.italics,
+    color: options?.color,
   });
 }
 
 function createParagraph(
   children: TextRun[],
-  options?: { alignment?: (typeof AlignmentType)[keyof typeof AlignmentType]; spacing?: { after?: number; before?: number }; heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel] }
+  options?: { alignment?: (typeof AlignmentType)[keyof typeof AlignmentType]; spacing?: { after?: number; before?: number } }
 ) {
   return new Paragraph({
     children,
     alignment: options?.alignment || AlignmentType.JUSTIFIED,
     spacing: { after: options?.spacing?.after ?? 200, before: options?.spacing?.before ?? 0 },
-    heading: options?.heading,
   });
 }
 
@@ -57,80 +55,82 @@ async function base64ToArrayBuffer(base64: string): Promise<ArrayBuffer> {
   return bytes.buffer;
 }
 
+async function fetchImageAsArrayBuffer(imagePath: string): Promise<ArrayBuffer> {
+  const response = await fetch(imagePath);
+  const blob = await response.blob();
+  return await blob.arrayBuffer();
+}
+
 export async function exportToWord(data: PetitionData): Promise<void> {
   const { client, bank, charges, moralDamage, wastedTimeDamage, chargeDescription, petitionType } = data;
   const office = DEFAULT_OFFICE;
 
   const totalCharges = charges.reduce((sum, c) => sum + c.value, 0);
   const materialDamage = totalCharges * 2;
-  const totalIndenization = moralDamage + wastedTimeDamage;
-  const totalValue = materialDamage + totalIndenization;
+  const totalValue = materialDamage + moralDamage + wastedTimeDamage;
   const chargeLabel = chargeDescription || PETITION_TYPE_LABELS[petitionType];
 
-  // Create header
+  // Fetch header and footer images
+  let headerImageData: ArrayBuffer | null = null;
+  let footerImageData: ArrayBuffer | null = null;
+  
+  try {
+    const headerModule = await import("@/assets/header-sena.png");
+    const footerModule = await import("@/assets/footer-sena.png");
+    headerImageData = await fetchImageAsArrayBuffer(headerModule.default);
+    footerImageData = await fetchImageAsArrayBuffer(footerModule.default);
+  } catch (error) {
+    console.error("Error loading header/footer images:", error);
+  }
+
+  // Create header with image
+  const headerChildren: Paragraph[] = [];
+  
+  if (headerImageData) {
+    headerChildren.push(
+      new Paragraph({
+        alignment: AlignmentType.RIGHT,
+        children: [
+          new ImageRun({
+            data: headerImageData,
+            transformation: {
+              width: 600,
+              height: 60,
+            },
+            type: "png",
+          }),
+        ],
+      })
+    );
+  }
+
   const header = new Header({
-    children: [
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          createTextRun(office.name, { bold: true, size: 28 }),
-        ],
-      }),
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          createTextRun(`${office.address} - CEP: ${office.cep}`, { size: FONT_SIZE_HEADER }),
-        ],
-      }),
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          createTextRun(`${office.city}/${office.state} | ${office.phone} | ${office.email}`, { size: FONT_SIZE_HEADER }),
-        ],
-      }),
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        border: {
-          bottom: { color: "1e3a5f", style: BorderStyle.SINGLE, size: 12 },
-        },
-        spacing: { after: 400 },
-        children: [],
-      }),
-    ],
+    children: headerChildren,
   });
 
-  // Create footer
+  // Create footer with image
+  const footerChildren: Paragraph[] = [];
+  
+  if (footerImageData) {
+    footerChildren.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new ImageRun({
+            data: footerImageData,
+            transformation: {
+              width: 600,
+              height: 50,
+            },
+            type: "png",
+          }),
+        ],
+      })
+    );
+  }
+
   const footer = new Footer({
-    children: [
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        border: {
-          top: { color: "1e3a5f", style: BorderStyle.SINGLE, size: 12 },
-        },
-        spacing: { before: 200 },
-        children: [
-          createTextRun(`${office.name} - `, { size: FONT_SIZE_SMALL, bold: true }),
-          createTextRun(office.website, { size: FONT_SIZE_SMALL }),
-        ],
-      }),
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          createTextRun("Página ", { size: FONT_SIZE_SMALL }),
-          new TextRun({
-            children: [PageNumber.CURRENT],
-            font: FONT_FAMILY,
-            size: FONT_SIZE_SMALL,
-          }),
-          createTextRun(" de ", { size: FONT_SIZE_SMALL }),
-          new TextRun({
-            children: [PageNumber.TOTAL_PAGES],
-            font: FONT_FAMILY,
-            size: FONT_SIZE_SMALL,
-          }),
-        ],
-      }),
-    ],
+    children: footerChildren,
   });
 
   // Build document sections
@@ -176,7 +176,7 @@ export async function exportToWord(data: PetitionData): Promise<void> {
 
   documentChildren.push(
     createParagraph([
-      createTextRun(`A parte Autora mantém vínculo contratual com a instituição financeira conforme comprovado (anexo 6), todavia, ao proceder à conferência de seus extratos, passou a constatar lançamentos mensais indevidos sob a rubrica "${chargeLabel}", sem que houvesse qualquer solicitação, anuência ou assinatura de contrato específico que legitimasse tais cobranças.`),
+      createTextRun(`A parte Autora mantém vínculo contratual com a instituição financeira conforme comprovado (anexo 6), todavia, ao proceder à conferência de seus extratos, passou a constatar lançamentos mensais indevidos sob a rubrica "${chargeLabel}", sem que houvesse qualquer solicitação, anuência ou assinatura de contrato específico que legitimasse tais cobranças. Evidencia-se, assim, a ocorrência de descontos unilaterais e abusivos, perpetrados em flagrante desrespeito aos princípios da lealdade contratual, da informação e da confiança, que regem as relações de consumo.`),
     ])
   );
 
@@ -192,78 +192,27 @@ export async function exportToWord(data: PetitionData): Promise<void> {
     ])
   );
 
-  // Tabela de cobranças
-  if (charges.length > 0) {
-    const tableRows = [
-      new TableRow({
-        children: [
-          new TableCell({
-            width: { size: 2000, type: WidthType.DXA },
-            children: [createParagraph([createTextRun("Data", { bold: true })], { alignment: AlignmentType.LEFT })],
-            shading: { fill: "f0f0f0" },
-          }),
-          new TableCell({
-            width: { size: 5000, type: WidthType.DXA },
-            children: [createParagraph([createTextRun("Descrição", { bold: true })], { alignment: AlignmentType.LEFT })],
-            shading: { fill: "f0f0f0" },
-          }),
-          new TableCell({
-            width: { size: 2000, type: WidthType.DXA },
-            children: [createParagraph([createTextRun("Valor", { bold: true })], { alignment: AlignmentType.RIGHT })],
-            shading: { fill: "f0f0f0" },
-          }),
-        ],
-      }),
-      ...charges.map(
-        (charge) =>
-          new TableRow({
-            children: [
-              new TableCell({
-                width: { size: 2000, type: WidthType.DXA },
-                children: [createParagraph([createTextRun(formatDateShort(charge.date))])],
-              }),
-              new TableCell({
-                width: { size: 5000, type: WidthType.DXA },
-                children: [createParagraph([createTextRun(charge.description)])],
-              }),
-              new TableCell({
-                width: { size: 2000, type: WidthType.DXA },
-                children: [createParagraph([createTextRun(formatCurrency(charge.value))], { alignment: AlignmentType.RIGHT })],
-              }),
-            ],
-          })
-      ),
-      new TableRow({
-        children: [
-          new TableCell({
-            columnSpan: 2,
-            width: { size: 7000, type: WidthType.DXA },
-            children: [createParagraph([createTextRun("TOTAL", { bold: true })])],
-            shading: { fill: "f5f5f5" },
-          }),
-          new TableCell({
-            width: { size: 2000, type: WidthType.DXA },
-            children: [createParagraph([createTextRun(formatCurrency(totalCharges), { bold: true })], { alignment: AlignmentType.RIGHT })],
-            shading: { fill: "f5f5f5" },
-          }),
-        ],
-      }),
-    ];
-
-    documentChildren.push(
-      new Paragraph({
-        children: [],
-        spacing: { before: 200, after: 200 },
-      }) as unknown as Paragraph
-    );
-
-    // Add table as a special element (we'll handle this differently)
-  }
+  // Placeholder for table position marker
+  documentChildren.push(
+    createParagraph([createTextRun("")], { spacing: { after: 100 } })
+  );
 
   // Continue with the rest of the petition text
   documentChildren.push(
     createParagraph([
       createTextRun(`Neste sentido, os valores cobrados INDEVIDAMENTE a título de "${chargeLabel}" soma a quantia de ${formatCurrencyExtended(totalCharges)}, com repetição do indébito (2x ${formatCurrency(totalCharges)}), totaliza o valor de ${formatCurrencyExtended(materialDamage)}, em virtude da devolução EM DOBRO.`),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("O desconto de valores diversos sem comunicar ao consumidor previamente deixa clara a evidência de que a parte Ré faltou com o DEVER DE INFORMAÇÃO, além de boa fé e confiança, pois a transparência fortalece a confiança do consumidor, evitando práticas abusivas ou práticas enganosas."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("Não restando alternativa a parte Autora, senão socorrer-se do Poder Judiciário para ver declarada a inexistência da relação jurídica que fundamentaria tais cobranças, bem como para restituir os valores pagos indevidamente e reparar os danos morais suportados diante da conduta abusiva da instituição financeira."),
     ])
   );
 
@@ -288,9 +237,63 @@ export async function exportToWord(data: PetitionData): Promise<void> {
     ])
   );
 
+  documentChildren.push(
+    createParagraph([
+      createTextRun(`O Banco Réu, ao realizar cobranças a título de "${chargeLabel}" sem respaldo contratual, violou frontalmente tais princípios, configurando prática abusiva e enriquecimento sem causa.`),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([createTextRun("III.II – DA COBRANÇA INDEVIDA E DA REPETIÇÃO DO INDÉBITO", { bold: true })], { spacing: { before: 200, after: 100 } })
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("A conduta da instituição financeira ré, ao realizar cobranças mensais por serviços não contratados, caracteriza típica prática abusiva, expressamente vedada pelo Código de Defesa do Consumidor."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("Assim, resta evidente que a conduta da parte ré configura prática abusiva, nos termos do art. 39 do CDC, razão pela qual deve ser declarada a nulidade da cobrança indevida, com a consequente restituição dos valores pagos em dobro, além da indenização pelos danos morais sofridos."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([createTextRun("III.III – DA RESPONSABILIDADE OBJETIVA DA INSTITUIÇÃO FINANCEIRA", { bold: true })], { spacing: { before: 200, after: 100 } })
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("A responsabilidade civil do Banco é objetiva, nos termos do art. 14 do CDC, bastando a comprovação da conduta lesiva, do dano e do nexo causal."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([createTextRun("III.IV – DA INVERSÃO DO ÔNUS DA PROVA", { bold: true })], { spacing: { before: 200, after: 100 } })
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("Nos termos do art. 6º, inciso VIII, do CDC, é cabível a inversão do ônus da prova em favor do consumidor, diante da sua hipossuficiência técnica e da verossimilhança das alegações."),
+    ])
+  );
+
   // V - DOS DANOS MATERIAIS
   documentChildren.push(
     createParagraph([createTextRun("V - DOS DANOS MATERIAIS – REPETIÇÃO DO INDÉBITO", { bold: true })], { alignment: AlignmentType.CENTER, spacing: { before: 400, after: 200 } })
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("Conforme amplamente demonstrado nos tópicos anteriores, a parte autora foi vítima de cobranças indevidas e reiteradas de um serviço não contratado."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("Diante da cobrança indevida, faz jus à restituição dos valores pagos, conforme determina o art. 42, parágrafo único, do Código de Defesa do Consumidor."),
+    ])
   );
 
   documentChildren.push(
@@ -306,6 +309,18 @@ export async function exportToWord(data: PetitionData): Promise<void> {
 
   documentChildren.push(
     createParagraph([
+      createTextRun("A conduta da instituição ré ultrapassa os limites do mero aborrecimento ou dissabor cotidiano. A cobrança indevida de valores da conta bancária da autora, de forma reiterada e sem qualquer respaldo contratual, caracteriza evidente violação à dignidade do consumidor."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([
+      createTextRun("O dano moral, neste contexto, é presumido (in re ipsa), pois decorre diretamente da afronta ao direito de personalidade, à confiança e à boa-fé objetiva."),
+    ])
+  );
+
+  documentChildren.push(
+    createParagraph([
       createTextRun(`Dessa forma, requer-se a condenação do Reclamado ao pagamento de INDENIZAÇÃO POR DANOS MORAIS, no valor de ${formatCurrencyExtended(moralDamage)}.`),
     ])
   );
@@ -314,6 +329,12 @@ export async function exportToWord(data: PetitionData): Promise<void> {
   if (wastedTimeDamage > 0) {
     documentChildren.push(
       createParagraph([createTextRun("VI.I – DO TEMPO DESPERDIÇADO", { bold: true })], { alignment: AlignmentType.CENTER, spacing: { before: 400, after: 200 } })
+    );
+
+    documentChildren.push(
+      createParagraph([
+        createTextRun("Além dos prejuízos materiais e morais já demonstrados, cumpre destacar a incidência da Teoria do Desvio Produtivo do Consumidor."),
+      ])
     );
 
     documentChildren.push(
@@ -342,10 +363,30 @@ export async function exportToWord(data: PetitionData): Promise<void> {
     createParagraph([createTextRun("c) DISPENSA de Audiência de Conciliação por ser matéria de direito e comportar julgamento antecipado da lide;")])
   );
   documentChildren.push(
-    createParagraph([createTextRun("d) CONDENAR o Requerido e julgar totalmente procedente o pedido;")])
+    createParagraph([createTextRun("d) CONDENAR o Requerido e julgar totalmente procedente o pedido para:")])
   );
   documentChildren.push(
-    createParagraph([createTextRun(`e) Que as indenizações sejam acumuladas, totalizando o valor de ${formatCurrencyExtended(totalValue)};`)])
+    createParagraph([createTextRun(`   i. Seja declarada a inexistência da contratação e/ou autorização para os descontos realizados sob a rubrica "${chargeLabel}";`)])
+  );
+  documentChildren.push(
+    createParagraph([createTextRun(`   ii. Condenar a parte ré à restituição em dobro dos valores indevidamente descontados, no valor de ${formatCurrencyExtended(materialDamage)};`)])
+  );
+  documentChildren.push(
+    createParagraph([createTextRun(`   iii. Seja a parte ré condenada ao pagamento de indenização pelos danos morais sofridos, no valor de ${formatCurrencyExtended(moralDamage)};`)])
+  );
+  if (wastedTimeDamage > 0) {
+    documentChildren.push(
+      createParagraph([createTextRun(`   iv. Seja reconhecida e fixada a indenização autônoma pelo tempo desperdiçado, no valor de ${formatCurrencyExtended(wastedTimeDamage)};`)])
+    );
+  }
+  documentChildren.push(
+    createParagraph([createTextRun(`   v. Que as indenizações acima sejam acumuladas, totalizando o valor de ${formatCurrencyExtended(totalValue)};`)])
+  );
+  documentChildren.push(
+    createParagraph([createTextRun("e) Seja condenado o Requerido a pagar as custas processuais e os honorários advocatícios;")])
+  );
+  documentChildren.push(
+    createParagraph([createTextRun("f) A produção de todas as provas admitidas em direito.")])
   );
 
   // Valor da Causa

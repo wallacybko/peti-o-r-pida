@@ -99,18 +99,18 @@ export function ChargesForm({
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-base">Lançamentos Indevidos</Label>
+          <Label className="text-base">Lançamentos Indevidos (Descontos)</Label>
           <Button onClick={addCharge} size="sm" variant="outline">
             <Plus className="w-4 h-4 mr-1" />
-            Adicionar
+            Adicionar Cobrança
           </Button>
         </div>
 
         {charges.length === 0 ? (
           <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
             <Receipt className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
-            <p className="text-muted-foreground">Nenhum lançamento adicionado</p>
-            <p className="text-sm text-muted-foreground/70">Clique em "Adicionar" para incluir cobranças</p>
+            <p className="text-muted-foreground">Nenhum desconto adicionado</p>
+            <p className="text-sm text-muted-foreground/70">Clique em "Adicionar Cobrança" para incluir os valores indevidos</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -137,12 +137,13 @@ export function ChargesForm({
                   />
                 </div>
                 <div className="col-span-3">
-                  <Label className="text-xs">Valor (R$)</Label>
+                  <Label className="text-xs">Valor do Desconto (R$)</Label>
                   <Input
                     type="number"
                     step="0.01"
                     value={charge.value || ''}
                     onChange={(e) => updateCharge(charge.id, 'value', parseFloat(e.target.value) || 0)}
+                    placeholder="Ex: 97,70"
                     className="mt-1"
                   />
                 </div>
