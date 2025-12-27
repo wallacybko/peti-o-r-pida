@@ -27,6 +27,7 @@ const initialClientData: ClientData = {
   cep: "",
   city: "Manaus",
   state: "AM",
+  comarca: "MANAUS", // Novo campo
 };
 
 const Index = () => {
@@ -38,7 +39,7 @@ const Index = () => {
   const [petitionType, setPetitionType] = useState<PetitionData["petitionType"]>("TARIFAS_INDEVIDAS");
   const [chargeDescription, setChargeDescription] = useState("PACOTE DE SERVIÇO PADRONIZADO PRIORITÁRIOS I");
   const [charges, setCharges] = useState<ChargeItem[]>([]);
-  const [moralDamage, setMoralDamage] = useState(20000);
+  const [moralDamage, setMoralDamage] = useState(5000);
   const [wastedTimeDamage, setWastedTimeDamage] = useState(2000);
   const [chargeScreenshots, setChargeScreenshots] = useState<string[]>([]);
 
