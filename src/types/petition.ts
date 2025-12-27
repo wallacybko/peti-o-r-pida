@@ -12,6 +12,8 @@ export interface ClientData {
   cep: string;
   city: string;
   state: string;
+  // Novo campo para comarca
+  comarca: string;
 }
 
 export interface BankData {
@@ -49,7 +51,7 @@ export interface PetitionData {
   client: ClientData;
   bank: BankData;
   petitionType: PetitionType;
-  chargeDescription: string;
+  chargeDescription: string; // Rubrica selecionada
   charges: ChargeItem[];
   moralDamage: number;
   wastedTimeDamage: number;
@@ -59,8 +61,8 @@ export interface PetitionData {
 
 export const DEFAULT_OFFICE: OfficeData = {
   name: 'SENA ADVOCACIA',
-  address: 'Av. Fernando Pessoa Nº 1179, Japiim II',
-  cep: '69076-100',
+  address: 'Avenida Fernando Pessoa, 1179, Japiim II',
+  cep: '69.076-790',
   city: 'Manaus',
   state: 'Amazonas',
   phone: 'OAB/AM 15.128 | OAB/CE 53112-A | OAB/RR 806-A',

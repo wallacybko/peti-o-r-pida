@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCPF } from "@/utils/formatters";
-import { User } from "lucide-react";
+import { User, MapPin } from "lucide-react";
 
 interface ClientFormProps {
   data: ClientData;
@@ -30,6 +30,24 @@ export function ClientForm({ data, onChange }: ClientFormProps) {
           <h3 className="font-heading text-lg font-semibold text-foreground">Dados do Autor</h3>
           <p className="text-sm text-muted-foreground">Informações pessoais do cliente</p>
         </div>
+      </div>
+
+      {/* Comarca - Campo importante destacado */}
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <MapPin className="w-4 h-4 text-primary" />
+          <Label htmlFor="comarca" className="text-primary font-medium">Comarca (Município do Juizado)</Label>
+        </div>
+        <Input
+          id="comarca"
+          value={data.comarca}
+          onChange={(e) => updateField('comarca', e.target.value.toUpperCase())}
+          placeholder="MANAUS"
+          className="bg-background"
+        />
+        <p className="text-xs text-muted-foreground mt-1.5">
+          Município onde a ação será proposta (pode ser diferente do endereço do cliente)
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
